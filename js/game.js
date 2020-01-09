@@ -12,13 +12,19 @@ var game = {
     // Run on page load.
     "onload" : function () {
         // Initialize the video.
-        if (!me.video.init(960, 640, {wrapper : "screen", scale : "auto"})) {
+        if (!me.video.init(960, 640, {wrapper : "screen", scale : "auto", scaleMethod: "flex-width"})) {
             alert("Your browser does not support HTML5 canvas.");
             return;
         }
 
         // Initialize the audio.
-        me.audio.init("mp3,ogg");
+        me.audio.init("ogg");
+
+        // Load font
+        me.loader.preload([
+            { name: "PressStart2P", type:"image", src: "data/fnt/PressStart2P.png" },
+            { name: "PressStart2P", type:"binary", src: "data/fnt/PressStart2P.fnt"}
+        ]);
 
         // set and load all resources.
         // (this will also automatically switch to the loading screen)
@@ -27,13 +33,21 @@ var game = {
 
     // Run on game resources loaded.
     "loaded" : function () {
-        me.state.set(me.state.MENU, new game.TitleScreen());
+        // set the "Play/Ingame" Screen Object
         me.state.set(me.state.PLAY, new game.PlayScreen());
 
-        // add our player entity in the entity pool
+        // register our player entity in the object pool
         me.pool.register("mainPlayer", game.PlayerEntity);
 
-        // Start the game.
+        // enable the keyboard
+        me.input.bindKey(me.input.KEY.LEFT,  "left");
+        me.input.bindKey(me.input.KEY.RIGHT, "right");
+        // map X, Up Arrow and Space for jump
+        me.input.bindKey(me.input.KEY.X,      "jump", true);
+        me.input.bindKey(me.input.KEY.UP,     "jump", true);
+        me.input.bindKey(me.input.KEY.SPACE,  "jump", true);
+
+        // start the game
         me.state.change(me.state.PLAY);
     }
 };
